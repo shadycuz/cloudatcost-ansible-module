@@ -92,7 +92,7 @@ class CloudAtCostInventory(object):
         # their labels aren't FQDNs
         retval['ansible_ssh_host'] = server["ip"]
         retval['ansible_host'] = server["ip"]
-
+	retval['ansible_ssh_pass'] = server["rootpass"]
         return retval
 
     def setupAPI(self):
