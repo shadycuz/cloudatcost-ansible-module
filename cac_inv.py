@@ -21,7 +21,7 @@ try:
 except ImportError:
     import simplejson as json
 
-_group = 'cloudatcost'  # a default group
+_group = 'csdfsfdasddatcost'  # a default group
 _prepend = 'cloud_'  # Prepend all CloudAtCost data, to avoid conflicts
 
 
