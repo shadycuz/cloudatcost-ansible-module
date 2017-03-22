@@ -21,7 +21,7 @@ try:
 except ImportError:
     import simplejson as json
 
-_group = 'csdfsfdasddatcost'  # a default group
+_group = 'cloudatcost'  # a default group
 _prepend = 'cloud_'  # Prepend all CloudAtCost data, to avoid conflicts
 
 
@@ -33,6 +33,7 @@ class CloudAtCostInventory(object):
 
         self.args = self.parse_cli_args()
         self.inventory = {}
+        self.groups = []
 
         # CloudAtCost API Object
         self.setupAPI()
@@ -62,6 +63,15 @@ class CloudAtCostInventory(object):
         """Makes a CloudAtCost API call to get the list of servers."""
         res = self.api.get_server_info()
         if res['status'] == 'ok':
+            for server in self.inventory:
+                if not server['label']:
+                    server['label'] = server['servername']
+                if server['label'].find(' '):
+                    split = server['label'].split()
+                    server['label'] = split[1]
+                    if split[0] in self.groups:
+                        self.groups.append(split[0])
+
             self.inventory = res['data']
         else:
             print("Looks like CloudAtCost's API is down:")
@@ -92,7 +102,7 @@ class CloudAtCostInventory(object):
         # their labels aren't FQDNs
         retval['ansible_ssh_host'] = server["ip"]
         retval['ansible_host'] = server["ip"]
-	retval['ansible_ssh_pass'] = server["rootpass"]
+        retval['ansible_ssh_pass'] = server["rootpass"]
         return retval
 
     def setupAPI(self):
