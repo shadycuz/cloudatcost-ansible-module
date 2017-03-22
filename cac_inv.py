@@ -39,7 +39,7 @@ class CloudAtCostInventory(object):
         self.setupAPI()
 
         self.update_inventory()
-
+        print(self.groups)
         # Data to print
         if self.args.host:
             data_to_print = self.get_host_info(self.args.host)
@@ -64,9 +64,12 @@ class CloudAtCostInventory(object):
         res = self.api.get_server_info()
         if res['status'] == 'ok':
             for server in self.inventory:
+                print('working on server')
                 if not server['label']:
                     server['label'] = server['servername']
+                    print('Server label changed')
                 if server['label'].find(' '):
+                    print("server Split Applied")
                     split = server['label'].split()
                     server['label'] = split[1]
                     if split[0] in self.groups:
