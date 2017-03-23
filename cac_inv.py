@@ -63,6 +63,7 @@ class CloudAtCostInventory(object):
         """Makes a CloudAtCost API call to get the list of servers."""
         res = self.api.get_server_info()
         if res['status'] == 'ok':
+            self.inventory = res['data']
             for server in self.inventory:
                 print('working on server')
                 if not server['label']:
@@ -74,8 +75,6 @@ class CloudAtCostInventory(object):
                     server['label'] = split[1]
                     if split[0] in self.groups:
                         self.groups.append(split[0])
-
-            self.inventory = res['data']
         else:
             print("Looks like CloudAtCost's API is down:")
             print("")
