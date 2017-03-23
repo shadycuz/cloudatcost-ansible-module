@@ -39,7 +39,6 @@ class CloudAtCostInventory(object):
         self.setupAPI()
 
         self.update_inventory()
-
         # Data to print
         if self.args.host:
             data_to_print = self.get_host_info(self.args.host)
@@ -47,7 +46,9 @@ class CloudAtCostInventory(object):
             # Display list of nodes for inventory
             data_to_print = {
                 _group: [server['label'] for server
-                         in self.inventory if server['label']],
+                         in self.inventory if server['label'] and server['group_label'] == _group],
+                group: [server['label'] for group
+                        in self.groups if server['label'] and server['group_label']== group],
                 '_meta': {
                     'hostvars': dict((server['label'],
                                       self.get_host_info(label=server['label']))
@@ -63,16 +64,19 @@ class CloudAtCostInventory(object):
         """Makes a CloudAtCost API call to get the list of servers."""
         res = self.api.get_server_info()
         if res['status'] == 'ok':
+            self.inventory = res['data']
             for server in self.inventory:
                 if not server['label']:
                     server['label'] = server['servername']
-                if server['label'].find(' '):
-                    split = server['label'].split()
+                if ' ' in server['label']:
+                    split = (server['label']).split()
                     server['label'] = split[1]
-                    if split[0] in self.groups:
+                    if split[0] not in self.groups:
                         self.groups.append(split[0])
+                    server['group_label'] = split[0]
+                else:
+                    server['group_label'] = _group
 
-            self.inventory = res['data']
         else:
             print("Looks like CloudAtCost's API is down:")
             print("")
