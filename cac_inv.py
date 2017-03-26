@@ -68,6 +68,7 @@ class CloudAtCostInventory(object):
             for server in self.inventory:
                 if not server['label']:
                     server['label'] = server['servername']
+                    server['isnew'] = True
                 if ' ' in server['label']:
                     split = (server['label']).split()
                     server['label'] = split[1]
@@ -106,7 +107,8 @@ class CloudAtCostInventory(object):
         # their labels aren't FQDNs
         retval['ansible_ssh_host'] = server["ip"]
         retval['ansible_host'] = server["ip"]
-        retval['ansible_ssh_pass'] = server["rootpass"]
+        if server['isnew']:
+            retval['ansible_ssh_pass'] = server["rootpass"]
         return retval
 
     def setupAPI(self):
