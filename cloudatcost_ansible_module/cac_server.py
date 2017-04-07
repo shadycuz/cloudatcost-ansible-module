@@ -64,7 +64,7 @@ options:
      - Amount of Disk Storage to allocate to this instance (GB)
     default: 10
     choices: [10 - 1000]
-  template_id:
+  template:
     description:
      - Operating System to use for the instance (must be a #id or text description from /v1/listtemplates.php)
     # Default of 26 is for CentOS 7 x64
@@ -122,7 +122,7 @@ EXAMPLES = '''
      cpus: 1
      ram: 1024
      storage: 10
-     template_id: 26
+     template: 26
      runmode: safe
      wait: yes
      wait_timeout: 3600
@@ -137,7 +137,7 @@ EXAMPLES = '''
      cpus: 1
      ram: 1024
      storage: 10
-     template_id: 26
+     template: 26
      runmode: safe
      wait: yes
      wait_timeout: 3600
