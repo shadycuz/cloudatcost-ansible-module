@@ -26,8 +26,12 @@ cac_inv.py::
 
 === Dependencies
 This module depends on the https://github.com/adc4392/python-cloudatcost[python-cloudatcost] module.
-Ubuntu::
+
+==== Ubuntu
+[bash]
+```
 apt-get install pycurl
+```
 
 == API Authentication
 
