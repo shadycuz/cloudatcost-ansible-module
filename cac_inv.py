@@ -66,16 +66,21 @@ class CloudAtCostInventory(object):
         if res['status'] == 'ok':
             self.inventory = res['data']
             for server in self.inventory:
+                server['isnew'] = False
                 if not server['label']:
                     server['label'] = server['servername']
-                if ' ' in server['label']:
-                    split = (server['label']).split()
-                    server['label'] = split[1]
-                    if split[0] not in self.groups:
-                        self.groups.append(split[0])
-                    server['group_label'] = split[0]
+                    server['group_label'] = 'New'
+                    self.groups.append('New')
+                    server['isnew'] = True
                 else:
-                    server['group_label'] = _group
+                    if ' ' in server['label']:
+                        split = (server['label']).split()
+                        server['label'] = split[1]
+                        if split[0] not in self.groups:
+                            self.groups.append(split[0])
+                        server['group_label'] = split[0]
+                    else:
+                        server['group_label'] = _group
 
         else:
             print("Looks like CloudAtCost's API is down:")
@@ -106,7 +111,8 @@ class CloudAtCostInventory(object):
         # their labels aren't FQDNs
         retval['ansible_ssh_host'] = server["ip"]
         retval['ansible_host'] = server["ip"]
-        retval['ansible_ssh_pass'] = server["rootpass"]
+        if server['isnew']:
+            retval['ansible_ssh_pass'] = server["rootpass"]
         return retval
 
     def setupAPI(self):
