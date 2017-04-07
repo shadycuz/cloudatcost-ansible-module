@@ -42,8 +42,9 @@ class CloudAtCostInventory(object):
         # Data to print
         if self.args.host:
             data_to_print = self.get_host_info(self.args.host)
-        elif self.args.list:
-            # Display list of nodes for inventory
+        elif self.args.list and self.groups:
+            # Display list of servers and groups of servers
+            
             data_to_print = {
                 _group: [server['label'] for server
                          in self.inventory if server['label'] and server['group_label'] == _group],
@@ -55,6 +56,19 @@ class CloudAtCostInventory(object):
                                      for server in self.inventory)
                 }
             }
+        elif self.args.list:
+             # Display list of servers if no groups are found.
+
+            data_to_print = {
+                _group: [server['label'] for server
+                         in self.inventory if server['label'] and server['group_label'] == _group],
+                '_meta': {
+                    'hostvars': dict((server['label'],
+                                      self.get_host_info(label=server['label']))
+                                     for server in self.inventory)
+                }
+            }
+
         else:
             data_to_print = "Error: Invalid options"
 
