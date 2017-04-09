@@ -42,32 +42,22 @@ class CloudAtCostInventory(object):
         # Data to print
         if self.args.host:
             data_to_print = self.get_host_info(self.args.host)
-        elif self.args.list and self.groups:
-            # Display list of servers and groups of servers
-            
-            data_to_print = {
-                _group: [server['label'] for server
-                         in self.inventory if server['label'] and server['group_label'] == _group],
-                group: [server['label'] for group
-                        in self.groups if server['label'] and server['group_label']== group],
-                '_meta': {
-                    'hostvars': dict((server['label'],
-                                      self.get_host_info(label=server['label']))
-                                     for server in self.inventory)
-                }
-            }
         elif self.args.list:
-             # Display list of servers if no groups are found.
-
-            data_to_print = {
-                _group: [server['label'] for server
-                         in self.inventory if server['label'] and server['group_label'] == _group],
+            # Generates output
+            groups = {}
+            for group in self.groups:
+                groups[group]= [server['label'] for server 
+                             in self.inventory if server['label'] and server['group_label'] == group]
+          
+            meta = {
                 '_meta': {
                     'hostvars': dict((server['label'],
                                       self.get_host_info(label=server['label']))
                                      for server in self.inventory)
                 }
             }
+            data_to_print = groups.copy()
+            data_to_print.update(meta)
 
         else:
             data_to_print = "Error: Invalid options"
@@ -84,7 +74,8 @@ class CloudAtCostInventory(object):
                 if not server['label']:
                     server['label'] = server['servername']
                     server['group_label'] = 'New'
-                    self.groups.append('New')
+                    if 'New' not in self.groups:
+                        self.groups.append('New')
                     server['isnew'] = True
                 else:
                     if ' ' in server['label']:
@@ -94,6 +85,8 @@ class CloudAtCostInventory(object):
                             self.groups.append(split[0])
                         server['group_label'] = split[0]
                     else:
+                        if _group not in self.groups:
+                            self.groups.append(_group)
                         server['group_label'] = _group
 
         else:
