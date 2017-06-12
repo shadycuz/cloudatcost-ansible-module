@@ -118,7 +118,7 @@ class CloudAtCostInventory(object):
         # their labels aren't FQDNs
         retval['ansible_ssh_host'] = server["ip"]
         retval['ansible_host'] = server["ip"]
-        if server['isnew']:
+        if server['isnew'] or 'New' in server['group_label']:
             retval['ansible_ssh_pass'] = server["rootpass"]
         return retval
 
