@@ -120,6 +120,7 @@ class CloudAtCostInventory(object):
         retval['ansible_host'] = server["ip"]
         if server['isnew'] or 'New' in server['group_label']:
             retval['ansible_ssh_pass'] = server["rootpass"]
+            retval['ansible_pass'] = server["rootpass"]
         return retval
 
     def setupAPI(self):
